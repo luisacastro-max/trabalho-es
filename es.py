@@ -89,27 +89,75 @@ class PersonalQueue:
     def dequeue(self):
         return self.list.removePosition(self.list.size() - 1)
     
-def eh_palindromo(palavra):
-    stack = PersonalStack()
-    palavra = palavra.lower()  
-    
-    for letra in palavra:
-        stack.push(letra)
-    
-    for letra in palavra:
-        if stack.pop() != letra:
-            return (palavra, False) 
-    return (palavra, True)  
-resultados = [
-    eh_palindromo("arara"),
-    eh_palindromo("casa"),
-    eh_palindromo("Reviver"),
-    eh_palindromo("Python"),
-    eh_palindromo("ovo")
-]
-for palavra, eh_pali in resultados:
-    print(f"'{palavra}': {'É palíndromo!' if eh_pali else 'Não é palíndromo.'}")
+class SistemaAtendimento:
+    def __init__(self):
+        self.fila_atendimento = PersonalQueue() 
+        self.historico_atendimentos = PersonalStack() 
 
+    def chegada_cliente(self, nome_cliente):
+       
+        self.fila_atendimento.enqueue(nome_cliente)
+        print(f"✅ '{nome_cliente}' entrou na fila. Posição: {self.fila_atendimento.list.size()}")
+
+    def atender_cliente(self):
+      
+        if self.fila_atendimento.list.isEmpty():
+            print("⚠️ Fila vazia! Nenhum cliente para atender.")
+            return
+        
+        cliente_atual = self.fila_atendimento.dequeue()
+        self.historico_atendimentos.push(cliente_atual)
+        print(f"🎉 '{cliente_atual}' foi atendido(a).")
+
+    def desfazer_ultimo_atendimento(self):
+ 
+        if self.historico_atendimentos.list.isEmpty():
+            print("⚠️ Histórico vazio! Nada para desfazer.")
+            return
+        
+        cliente_retornado = self.historico_atendimentos.pop()
+        self.fila_atendimento.enqueue(cliente_retornado)
+        print(f"↩️ '{cliente_retornado}' voltou para a fila.")
+
+    def mostrar_fila(self):
+      
+        if self.fila_atendimento.list.isEmpty():
+            print("📭 Fila vazia.")
+            return
+        
+        print("\n📋 Fila de Atendimento:")
+        for i in range(self.fila_atendimento.list.size()):
+            print(f"{i+1}º: {self.fila_atendimento.list.elementAt(i)}")
+
+    def mostrar_historico(self):
+      
+        if self.historico_atendimentos.list.isEmpty():
+            print("📭 Histórico vazio.")
+            return
+        
+        print("\n📜 Histórico de Atendimentos (do mais recente):")
+        for i in range(self.historico_atendimentos.list.size()):
+            print(f"→ {self.historico_atendimentos.list.elementAt(i)}")
+
+if __name__ == "__main__":
+    sistema = SistemaAtendimento()
+
+
+    sistema.chegada_cliente("João")
+    sistema.chegada_cliente("Maria")
+    sistema.chegada_cliente("Carlos")
+
+    sistema.mostrar_fila()
+
+    sistema.atender_cliente()
+    sistema.atender_cliente()
+
+    sistema.mostrar_historico()
+
+    sistema.desfazer_ultimo_atendimento()
+
+    sistema.mostrar_fila()
+    sistema.mostrar_historico()
     
 
 queue = PersonalQueue();
